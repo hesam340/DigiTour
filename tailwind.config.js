@@ -13,11 +13,11 @@ module.exports = {
       },
       colors: {
         primary: "#FDB713",
-        secondary: "#10411B",
+        secondary: "#fff53a",
         complementry: "#009ECA",
+        textButton: "#0A0B0C",
         textColor: "#282828",
       },
     },
   },
-  plugins: [require("daisyui")],
 };
