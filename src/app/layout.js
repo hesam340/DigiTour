@@ -9,6 +9,12 @@ import "@/app/globals.css";
 export const metadata = {
   title: "دیجی تور",
   description: "سایت خرید آنلاین تورهای گردشگری",
+  icons: {
+    icon: "/icons/favicon.ico",
+    shortcut: "/icons/favicon.ico",
+    apple: "/icons/apple-icon.png",
+  },
+  manifest: "/icons/manifest.json",
 };
 
 export default function RootLayout({ children }) {
