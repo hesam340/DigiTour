@@ -1,8 +1,10 @@
 export default async function sitemap() {
+  const API_URL =
+    process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BASE_URL;
   const staticRoutes = ["", "tours"];
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}tour`
-  );
+  const res = await fetch(`${API_URL}tour`, {
+    cache: "no-store",
+  });
   const tours = await res.json();
 
   const routes = staticRoutes.map((route) => ({

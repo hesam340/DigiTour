@@ -3,8 +3,10 @@ import axios from "axios";
 import { getNewTokens } from "@/services/token";
 import { setCookie, getCookie } from "@/utils/cookie";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BASE_URL;
+
 const api = axios.create({
-  baseURL: `${process.env.NEXT_PUBLIC_BASE_URL}`,
+  baseURL: `${API_URL}`,
   headers: {
     "Content-Type": "application/json",
   },

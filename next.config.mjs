@@ -8,6 +8,7 @@ const nextConfig = {
         port: "6500",
         pathname: "/static/images/**",
       },
+      { protocol: "https", hostname: "my-backend.liara.run" },
       {
         protocol: "https",
         hostname: "cdn.jsdelivr.net",
