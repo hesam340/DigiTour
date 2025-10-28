@@ -1,0 +1,56 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["./*"],
+      "@/app/*": ["./app/*"],
+      "@/core/*": ["./core/*"],
+      "@/types/*": ["./core/types/*"],
+      "@/enums/*": ["./core/enums/*"],
+      "@/hooks/*": ["./core/hooks/*"],
+      "@/utils/*": ["./core/utils/*"],
+      "@/configs/*": ["./core/configs/*"],
+      "@/services/*": ["./core/services/*"],
+      "@/constants/*": ["./core/constants/*"],
+      "@/components/*": ["./components/*"],
+      "@/atoms/*": ["./components/atoms/*"],
+      "@/partials/*": ["./components/partials/*"],
+      "@/templates/*": ["./components/templates/*"],
+      "@/providers/*": ["./components/partials/providers/*"],
+      "@/container/*": ["./components/partials/container/*"],
+      "@/skeletons/*": ["./components/skeletons/*"],
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

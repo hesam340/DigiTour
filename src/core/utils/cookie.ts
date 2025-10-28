@@ -1,0 +1,12 @@
+const setCookie = (name: string, value: string, days: number): void => {
+  document.cookie = `${name}=${value};path=/;max-age=${days * 24 * 60 * 60}`;
+};
+
+const getCookie = (cookieName: string): string | undefined => {
+  return document.cookie
+    .split(";")
+    .find((token) => token.trim().split("=")[0] === cookieName)
+    ?.split("=")[1];
+};
+
+export { setCookie, getCookie };
