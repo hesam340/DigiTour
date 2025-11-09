@@ -38,7 +38,7 @@ function SearchForm({ data }:TSearchFormProps) {
     if (endDate) queryObj.endDate = endDate;
 
     setQuery(queryObj);
-  }, [data,getQuery]);
+  }, [data]);
 
   const searchHandler = (e:any) => {
     e.preventDefault();
