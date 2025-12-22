@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 
+import { TEdit } from "@/core/types/fetchData";
 import { useGetUserData } from "@/core/services/queries";
 import ProfileSkeleton from "@/skeletons/ProfileSkeleton";
 import { profileSchema } from "@/core/utils/profileSchema";
@@ -11,14 +12,13 @@ import { useEditUserData } from "@/core/services/mutations";
 import PublicUserInfo from "@/templates/profile/profilePage/PublicUserInfo";
 import PrivateUserInfo from "@/templates/profile/profilePage/PrivateUserInfo";
 import AccountBankUserInfo from "@/templates/profile/profilePage/AccountBankUserInfo";
-import { TEdit, TProfile } from "@/core/types/fetchData";
 
 function ProfilePage() {
   const { data, isPending } = useGetUserData();
   const { mutate } = useEditUserData();
 
   const methods = useForm({
-    resolver: yupResolver(profileSchema),
+    resolver: zodResolver(profileSchema),
     mode: "onBlur",
   });
 

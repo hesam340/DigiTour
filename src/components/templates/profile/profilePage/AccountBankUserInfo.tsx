@@ -87,7 +87,7 @@ function AccountBankUserInfo({ data, formHandler }: TProfilePageProps) {
               <p className="text-base font-light">شماره شبا</p>
               <p className="text-base font-medium">
                 {data?.payment?.shaba_code
-                  ? e2p(data?.payment?.shaba_code)
+                  ? `IR ${e2p(data?.payment?.shaba_code)}`
                   : "-"}
               </p>
             </div>
@@ -95,7 +95,7 @@ function AccountBankUserInfo({ data, formHandler }: TProfilePageProps) {
               <p className="text-base font-light">شماره حساب</p>
               <p className="text-base font-medium">
                 {data?.payment?.accountIdentifier
-                  ? `IR - ${e2p(data?.payment?.accountIdentifier)}`
+                  ? e2p(data?.payment?.accountIdentifier)
                   : "-"}
               </p>
             </div>

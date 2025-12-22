@@ -1,132 +1,100 @@
-import { object, string } from "yup";
-
-import { isValidIranianNationalCode } from "@/utils/validation";
+import { z } from "zod";
+import { zMelliCode, zSheba, zCardNumber } from "zod-ir";
+import { validatePersianName } from "@/core/utils/helperValidation";
 
 const persianRegex = /^[ \u0600-\u06FF\uFB8A\u067E\u0686\u06AF\u200C]+$/;
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const shabaRegex = /^[0-9]{24}$/;
-const debitRegex = /^\d{16}$/;
-const accountRegex = /^\d{6,20}$/;
 
-export const profileSchema = object({
-  email: string()
-    .test("email", "ایمیل معتبر وارد کنید", (val) => {
-      if (!val || val.trim() === "") return true;
-      return emailRegex.test(val);
-    })
-    .trim(),
-  firstName: string()
-    .nullable()
-    .notRequired()
-    .trim()
-    .test("firstName-required-if-lastName", function (value) {
-      const { lastName } = this.parent;
+export const profileSchema = z
+  .object({
+    email: z
+      .string()
+      .trim()
+      .optional()
+      .refine((val) => !val || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val), {
+        message: "ایمیل معتبر وارد کنید",
+      }),
 
-      if (!value && !lastName) return true;
+    firstName: z.string().trim().nullable().optional(),
 
-      if (value && !persianRegex.test(value)) {
-        return this.createError({ message: "فقط حروف فارسی تایپ شود" });
-      }
+    lastName: z.string().trim().nullable().optional(),
 
-      if (value && value.length < 2) {
-        return this.createError({
-          message: "تعداد کاراکترها باید بیش از ۲ باشد",
-        });
-      }
+    nationalCode: z
+      .string()
+      .trim()
+      .optional()
+      .refine((val) => !val || zMelliCode().safeParse(val).success, {
+        message: "کد ملی معتبر وارد کنید",
+      }),
 
-      if (value && value.length > 15) {
-        return this.createError({
-          message: "تعداد کاراکترها باید کمتر از ۱۵ باشد",
-        });
-      }
+    gender: z
+      .string()
+      .trim()
+      .nullable()
+      .optional()
+      .refine((val) => !val || ["female", "male"].includes(val), {
+        message: "مقدار معتبر وارد کنید",
+      }),
 
-      if (lastName && !value) {
-        return this.createError({ message: "نام را وارد کنید" });
-      }
+    birthDate: z.string().nullable().optional(),
 
-      return true;
+    payment: z.object({
+      shaba_code: z
+        .string()
+        .nullable()
+        .optional()
+        .transform((val) => {
+          if (!val) return val;
+          return `IR${val}`;
+        })
+        .refine((val) => !val || zSheba().safeParse(val).success, {
+          message: "شماره شبا نامعتبر است!",
+        })
+        .transform((val) => {
+          if (!val) return val;
+          return val.replace(/^IR/, "");
+        }),
+
+      debitCard_code: z
+        .string()
+        .nullable()
+        .optional()
+        .refine((val) => !val || zCardNumber().safeParse(val).success, {
+          message: "شماره کارت را بدون فاصله وارد کنید",
+        }),
+
+      accountIdentifier: z
+        .string()
+        .nullable()
+        .optional()
+        .refine((val) => !val || /^\d{6,20}$/.test(val), {
+          message: "شماره حساب معتبر وارد کنید",
+        }),
     }),
-  lastName: string()
-    .nullable()
-    .notRequired()
-    .trim()
-    .test("lastName-required-if-firstName", function (value) {
-      const { firstName } = this.parent;
+  })
+  .superRefine((data, ctx) => {
+    const { firstName, lastName } = data;
 
-      if (!value && !firstName) return true;
+    if ((firstName || lastName) && firstName) {
+      validatePersianName(firstName, "firstName", ctx);
+    }
 
-      if (value && !persianRegex.test(value)) {
-        return this.createError({ message: "فقط حروف فارسی تایپ شود" });
-      }
+    if ((firstName || lastName) && lastName) {
+      validatePersianName(lastName, "lastName", ctx);
+    }
 
-      if (value && value.length < 2) {
-        return this.createError({
-          message: "تعداد کاراکترها باید بیش از ۲ باشد",
-        });
-      }
+    if (lastName && !firstName) {
+      ctx.addIssue({
+        path: ["firstName"],
+        message: "نام را وارد کنید",
+        code: "custom",
+      });
+    }
 
-      if (value && value.length > 15) {
-        return this.createError({
-          message: "تعداد کاراکترها باید کمتر از ۱۵ باشد",
-        });
-      }
-
-      if (firstName && !value) {
-        return this.createError({ message: "نام خانوادگی را وارد کنید" });
-      }
-
-      return true;
-    }),
-  nationalCode: string()
-    .notRequired()
-    .test("is-valid-national-code", "کد ملی معتبر وارد کنید", (value) => {
-      if (!value || value.trim() === "") return true;
-      return isValidIranianNationalCode(value);
-    })
-    .trim(),
-  gender: string()
-    .nullable()
-    .notRequired()
-    .test("is-valid-gender", "مقدار معتبر وارد کنید", (value) => {
-      if (!value) return true;
-      return ["female", "male"].includes(value);
-    })
-    .trim(),
-  birthDate: string().nullable().notRequired(),
-  payment: object({
-    shaba_code: string()
-      .nullable()
-      .notRequired()
-      .test("is-valid-shaba", function (value) {
-        if (!value) return true;
-        if (!shabaRegex.test(value)) {
-          return this.createError({ message: "شماره شبا نامعتبر است!" });
-        }
-        return true;
-      }),
-    debitCard_code: string()
-      .nullable()
-      .notRequired()
-      .test("is-valid-debit", function (value) {
-        if (!value) return true;
-        if (!debitRegex.test(value)) {
-          return this.createError({
-            message: "شماره کارت را بدون فاصله وارد کنید",
-          });
-        }
-        return true;
-      }),
-    accountIdentifier: string()
-      .nullable()
-      .notRequired()
-      .test("is-valid-account", function (value) {
-        if (!value) return true;
-        if (!accountRegex.test(value)) {
-          return this.createError({
-            message: "شماره حساب معتبر وارد کنید",
-          });
-        }
-        return true;
-      }),
-  }),
-});
+    if (firstName && !lastName) {
+      ctx.addIssue({
+        path: ["lastName"],
+        message: "نام خانوادگی را وارد کنید",
+        code: "custom",
+      });
+    }
+  });

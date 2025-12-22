@@ -26,7 +26,7 @@ function CheckoutPage() {
   const [showGender, setShowGender] = useState<boolean>(false);
   const [canPurchase, setCanPurchase] = useState<boolean>(true);
   const { data: tour, refetch } = useCheckout();
-  const { data: userTours} = useUserTours();
+  const { data: userTours } = useUserTours();
   const { data: userData } = useGetUserData();
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -44,7 +44,9 @@ function CheckoutPage() {
   useEffect(() => {
     refetch();
     if (userData?.data) {
-      const fullName = `${userData?.data.firstName} ${userData?.data.lastName}`;
+      const fullName = `${userData?.data.firstName || ""} ${
+        userData?.data.lastName || ""
+      }`;
       reset({
         fullName,
         gender: userData?.data.gender,
@@ -64,13 +66,14 @@ function CheckoutPage() {
 
   const generateId = Math.sqrt(Math.random());
 
-  const orderHandler = (data:TOrderHandlerFormData) => {
+  const orderHandler = (data: TOrderHandlerFormData) => {
     mutate(data, {
       onSuccess: () => {
         router.push(
           `/payment?status=success&tour=${tour?.data?.title}&id=${tour?.data?.id}`
         );
         queryClient.invalidateQueries({ queryKey: ["user-tours"] });
+        queryClient.invalidateQueries({ queryKey: ["userTransactions"] });
         localStorage.setItem("key", JSON.stringify(generateId));
       },
       onError: () => {
@@ -82,7 +85,10 @@ function CheckoutPage() {
     });
   };
 
-  const days = stayingDays(tour?.data?.startDate || "", tour?.data?.endDate || "");
+  const days = stayingDays(
+    tour?.data?.startDate || "",
+    tour?.data?.endDate || ""
+  );
 
   return (
     <section className="bg-white w-full h-full md:bg-gray-100 md:py-9 lg:py-20 flex justify-center">

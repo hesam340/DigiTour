@@ -13,7 +13,7 @@ function AuthProvider({ children }: TPublicProps) {
 
   useEffect(() => {
     if (!data?.data && !isPending) router.push("/");
-  }, [router, data, isPending]);
+  }, [router, data?.data, isPending]);
 
   return children;
 }

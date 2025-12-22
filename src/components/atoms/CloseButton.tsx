@@ -13,7 +13,7 @@ function CloseButton({ closeModal, check }: TCLoseButtonProps) {
     >
       <Icon
         name="close"
-        className="w-full h-full"
+        className="size-full"
         fill="none"
         stroke="#171717"
       />

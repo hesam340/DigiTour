@@ -2,10 +2,10 @@ import Image from "next/image";
 import { Controller } from "react-hook-form";
 
 import Icon from "@/core/utils/icon";
+import { getBankInfo } from "zod-ir";
+import { GENDER } from "@/core/enums/enums";
 import { TUserInputs } from "@/core/types/props";
 import { e2p, p2e } from "@/core/utils/replaceNumber";
-import { getBankByCardNumber } from "iran-bank-detector";
-import { GENDER } from "@/core/enums/enums";
 
 function UserInput({ control, name, showGender, setShowGender }: TUserInputs) {
   const genderHandler = (
@@ -25,7 +25,7 @@ function UserInput({ control, name, showGender, setShowGender }: TUserInputs) {
 
   const bankLogo = (value?: string): string | boolean | undefined => {
     if (!value) return undefined;
-    const bank = getBankByCardNumber(value);
+    const bank = getBankInfo(value);
     if (!bank) return false;
     return bank?.logo;
   };
